@@ -17,10 +17,12 @@ import java.util.Random;
 
 public class Synth {
 
+    public static final int NUM_GEN = 200000;
+
     public static void main(String[] args) {
         Random rand = new Random();
 
-        for(int run = 0; run < 55000; run++) {
+        for(int run = 0; run < NUM_GEN; run++) {
             int[] classes = new int[23];
             for (int i = 0; i < 23; i++) {
                 classes[i] = rand.nextInt(16);
@@ -52,7 +54,7 @@ public class Synth {
             buildSynth(h, run);
 
             try {
-                FileWriter fw = new FileWriter("/Users/josephcleveland/dataset/mat.txt", true);
+                FileWriter fw = new FileWriter("C:/Users/Joe/Summer/Data/mat.txt", true);
                 String s = "";
                 for (int i = 0; i < 23; i++) {
                     s += classes[i];
@@ -177,7 +179,7 @@ public class Synth {
                         0.02, 0.0,      // Start (Time, Value)
                         h[16], 1.0,     //Attack
                         h[17], h[18],   // Decay to the sustain value
-                        h[22], h[18],   // Hold the sustain value for sustain time
+                        0.8, 0.8,   // Hold the sustain value (18) for sustain time (22)
                         h[19], 0.0,     //Release
                 };
         SegmentedEnvelope myEnvData = new SegmentedEnvelope( data );
@@ -206,15 +208,15 @@ public class Synth {
 
         //flp.output.connect(myOut.input);
 
-        File waveFile = new File( "/Users/josephcleveland/dataset/samp" + (6000 + num) + ".wav" );
+        File waveFile = new File( "C:/Users/Joe/Summer/Data/samp" + (num) + ".wav" );
         try {
-            WaveRecorder recorder = new WaveRecorder(synth, waveFile);
+            WaveRecorder recorder = new WaveRecorder(synth, waveFile, 1);
             flp.output.connect(0, recorder.getInput(), 0 );
             recorder.start();
             synth.start();
             myOut.start();
             envPlayer.start();
-            Thread.sleep(1000);
+            synth.sleepFor(1);
             recorder.stop();
 
         } catch(FileNotFoundException | InterruptedException e2) {}
